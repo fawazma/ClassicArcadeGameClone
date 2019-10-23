@@ -26,4 +26,8 @@ Fawaz Bukhowa<br />
 #### 5- README.md
 
 ## Instructions:
+- Open Terminal and type:
+```
+git clone https://github.com/fawazma/ClassicArcadeGameClone.git
+```
 - Open index.html
