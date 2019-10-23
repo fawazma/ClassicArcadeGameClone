@@ -30,4 +30,4 @@ Fawaz Bukhowa<br />
 ```
 git clone https://github.com/fawazma/ClassicArcadeGameClone.git
 ```
-- Open index.html
+- Open **index.html**
