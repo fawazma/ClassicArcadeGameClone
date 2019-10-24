@@ -23,8 +23,6 @@ Fawaz Bukhowa<br />
 - road-block.png<br />
 - sidewalk-block.png
 
-#### 5- README.md
-
 ## Instructions:
 - Open Terminal and type:
 ```
