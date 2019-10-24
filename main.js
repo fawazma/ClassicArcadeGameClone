@@ -82,11 +82,11 @@ var Engine = (function(global) {
     }
 
     function updateEntities(dt) {
-        allEnemies.forEach(function(Car) {
-            Car.update(dt);
+        allEnemies.forEach(function(car) {
+            car.update(dt);
         });
-        allEnemies.forEach(function(Car1) {
-            Car1.update(dt);
+        allEnemies.forEach(function(car1) {
+            car1.update(dt);
         });
         player.update();
         winningblocks.forEach(function(Winblock) {
@@ -122,11 +122,11 @@ var Engine = (function(global) {
             }
         }
 
-        allEnemies.forEach(function(Car) {
-            Car.render();
+        allEnemies.forEach(function(car) {
+            car.render();
         });
-        allEnemies.forEach(function(Car1) {
-            Car1.render();
+        allEnemies.forEach(function(car1) {
+            car1.render();
         });
         player.render();
 
@@ -146,10 +146,10 @@ var Engine = (function(global) {
 
     Resources.load([
         'images/road-block.png',
-        'images/Car.png',
-        'images/Car1.png',
-        'images/Car_anti.png',
-        'images/Car_anti1.png',
+        'images/suv_car.png',
+        'images/suv_car_back.png',
+        'images/sedan_car_back.png',
+        'images/sedan_car.png',
         'images/win.png',
         'images/heart.png',
         'images/sidewalk-block.png',
@@ -204,7 +204,7 @@ function youWin(){
 }
 
 
-var Car = function(x, y, speed = 1, carimage) {
+var car = function(x, y, speed = 1, carimage) {
 
     this.x = x;
     this.y = y;
@@ -215,7 +215,7 @@ var Car = function(x, y, speed = 1, carimage) {
 };
 
 
-Car.prototype.update = function(dt) {
+car.prototype.update = function(dt) {
 
     this.x += 50 * this.speed * dt;
 
@@ -231,14 +231,14 @@ Car.prototype.update = function(dt) {
     checkLives();
 };
 
-Car.prototype.render = function() {
+car.prototype.render = function() {
 
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 
 };
 
 
-var Car1 = function(x, y, speed = 1, carimage) {
+var car1 = function(x, y, speed = 1, carimage) {
 
     this.x = x;
     this.y = y;
@@ -247,7 +247,7 @@ var Car1 = function(x, y, speed = 1, carimage) {
     this.sprite = carimage;
 };
 
-Car1.prototype.update = function(dt) {
+car1.prototype.update = function(dt) {
 
     this.x -= 50 * this.speed * dt;
 
@@ -264,7 +264,7 @@ Car1.prototype.update = function(dt) {
 };
 
 
-Car1.prototype.render = function() {
+car1.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 
 };
@@ -369,29 +369,29 @@ Points.prototype.update = function(){
 var flag;
 var columns = [ -5, -100, -200, -300, -400,-500,-600,-700,-800,-900];
 var columns1 = [ 1005, 1100, 1900, 1200, 1300,1400,1500,1600,1700,1800];
-var CarX;
-var Car1X;
+var carX;
+var car1X;
 
 var rows = [ 300,380,460];
 var rows1 = [ 60, 140, 220];
-var CarY;
-var Car1Y;
-var CarSpeed;
-var CarImage;
-var cars =['images/Car.png','images/Car_anti1.png',];
-var cars1 =['images/Car1.png','images/Car_anti.png',];
+var carY;
+var car1Y;
+var carSpeed;
+var carImage;
+var cars =['images/suv_car.png','images/sedan_car.png',];
+var cars1 =['images/suv_car_back.png','images/sedan_car_back.png',];
 
 setInterval(function instances(){
-    CarX = columns[Math.floor(Math.random() * 10)],
-    CarY = rows[Math.floor(Math.random() *  6)],
-    CarSpeed = Math.floor(Math.random() * 15+0.1),
-    CarImage = cars[Math.floor(Math.random() * 2)],
-    allEnemies.push(new Car(CarX, CarY, CarSpeed, CarImage));
-    Car1X = columns1[Math.floor(Math.random() * 10)],
-    Car1Y = rows1[Math.floor(Math.random() *  6)],
-    CarSpeed = Math.floor(Math.random() * 15+0.1),
-    CarImage = cars1[Math.floor(Math.random() * 2)],
-    allEnemies.push(new Car1(Car1X, Car1Y, CarSpeed, CarImage));
+    carX = columns[Math.floor(Math.random() * 10)],
+    carY = rows[Math.floor(Math.random() *  6)],
+    carSpeed = Math.floor(Math.random() * 15+0.1),
+    carImage = cars[Math.floor(Math.random() * 2)],
+    allEnemies.push(new car(carX, carY, carSpeed, carImage));
+    car1X = columns1[Math.floor(Math.random() * 10)],
+    car1Y = rows1[Math.floor(Math.random() *  6)],
+    carSpeed = Math.floor(Math.random() * 15+0.1),
+    carImage = cars1[Math.floor(Math.random() * 2)],
+    allEnemies.push(new car1(car1X, car1Y, carSpeed, carImage));
 },500)
 
 
