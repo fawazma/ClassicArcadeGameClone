@@ -1,36 +1,55 @@
+//Image loading module
 (function() {
     var resourceCache = {};
     var loading = [];
     var readyCallbacks = [];
+
+    //This is the image loading function
+    //urlOrArr can be Array of images and a single image
+    //Then we call loading function
     function load(urlOrArr) {
         if(urlOrArr instanceof Array) {
+          //urlOrArr is Array of images
             urlOrArr.forEach(function(url) {
                 _load(url);
             });
         } else {
+          //urlOrArr is a single image
             _load(urlOrArr);
+          //call loading function of single image
         }
     }
+
+    //It will re-use chached images saved in resourceCache if you attempt to load the same image multiple times
     function _load(url) {
+
         if(resourceCache[url]) {
+          //if image url loaded prev time, just return image rather reload image.
             return resourceCache[url];
         } else {
+          //url has not been loaded prev time.
             var img = new Image();
+            //load image from url.
             img.onload = function() {
+              //once image has loaded , then add image to cache.
                 resourceCache[url] = img;
 
                 if(isReady()) {
                     readyCallbacks.forEach(function(func) { func(); });
                 }
             };
+            //Set the initial cache value to false. this will change when calling image's onload event handler.
             resourceCache[url] = false;
+            //image's src attribute to the passed in url.
             img.src = url;
         }
     }
     function get(url) {
+      //grab references to images they know have been previously loaded.
         return resourceCache[url];
     }
     function isReady() {
+      //This function checks if all the images requested to be loaded are loaded properly.
         var ready = true;
         for(var k in resourceCache) {
             if(resourceCache.hasOwnProperty(k) &&
@@ -41,6 +60,7 @@
         return ready;
     }
     function onReady(func) {
+      //Add a function to the callback stack that is called when every images are loaded correctly.
         readyCallbacks.push(func);
     }
     window.Resources = {
@@ -50,22 +70,31 @@
         isReady: isReady
     };
 })();
+
+//End of image loading module
+
+
+//A game engine works by drawing the entire game screen
 var Engine = (function(global) {
-    var doc = global.document,
-        win = global.window,
-        canvas = doc.createElement('canvas'),
-        ctx = canvas.getContext('2d'),
+    var doc = global.document, //get doucment handle
+        win = global.window, // get window handle
+        canvas = doc.createElement('canvas'), //create canvas element
+        ctx = canvas.getContext('2d'), //grab the 2D context for that canvas
         lastTime;
 
-    canvas.width = 1010;
-    canvas.height = 855;
-    doc.body.appendChild(canvas);
+    canvas.width = 1010; //set canvas width
+    canvas.height = 855; // set canvas height
+    doc.body.appendChild(canvas); //add canvas to DOM
+
     function main() {
+      //get current time to now valiable.
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
         update(dt);
-        render();
+        render(); // call update/render function pass data along dt(delta time) so it can make smooth anim.
         lastTime = now;
+
+        // call requestAnimationFrame function to call draw another frame.
         win.requestAnimationFrame(main);
     }
 
@@ -74,28 +103,33 @@ var Engine = (function(global) {
         lastTime = Date.now();
         main();
     }
-
+    //call updateentities function
     function update(dt) {
         updateEntities(dt);
 
     }
-
+    //update all entities.
     function updateEntities(dt) {
+        //update all enemy that move left to right.
         allEnemies.forEach(function(car) {
             car.update(dt);
         });
+        //update all enemy that move right to left
         allEnemies.forEach(function(car1) {
             car1.update(dt);
         });
+        //update player who acrssing the road.
         player.update();
+        //winningblock update
         winningblocks.forEach(function(Winblock) {
             Winblock.update();
         });
+        //update points
         points.update();
     }
-
+    //This function initially draws the "game level"
     function render() {
-
+        //this is imageurl arrays.
         var rowImages = [
                 'images/sidewalk-block.png',
                 'images/road-block.png',
@@ -107,35 +141,37 @@ var Engine = (function(global) {
                 'images/sidewalk-block.png',
                 'images/sidewalk-block.png'
             ],
-            numRows = 9,
-            numCols = 10,
+            numRows = 9, //number of rows
+            numCols = 10, //number of columns
             row, col;
 
 
         ctx.clearRect(0,0,canvas.width,canvas.height)
-
+        //draw images to grid with row images.
         for (row = 0; row < numRows; row++) {
             for (col = 0; col < numCols; col++) {
 
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
+        //draw all enemies
         allEnemies.forEach(function(car) {
             car.render();
         });
         allEnemies.forEach(function(car1) {
             car1.render();
         });
+        //draw player
         player.render();
-
+        //draw allives
         alllives.forEach(function(lives){
             lives.render();
         });
-
+        //draw keys
         allKeys.forEach(function(key) {
             key.render();
         });
+        //draw pointer
         points.render();
     }
 
@@ -143,6 +179,7 @@ var Engine = (function(global) {
 
     }
 
+    //this function is used to load images from resource
     Resources.load([
         'images/road-block.png',
         'images/suv_car.png',
@@ -161,15 +198,17 @@ var Engine = (function(global) {
     global.ctx = ctx;
 })(this);
 
-
+//this part is control all activities in game.
 let modal = document.querySelector(".start-game");
 let overlay = document.querySelector(".overlay");
 let gameover = document.querySelector(".game-over");
 let winnerModal = document.querySelector(".winner");
 
 
-var playerPoints = 0;
-var playerLives = 3;
+var playerPoints = 0; //playerpoint 0
+var playerLives = 3; // set player lives 3
+
+//this function to hide modal
 function startGame(){
     modal.classList.add("hide");
     overlay.classList.add("hide");
@@ -178,18 +217,18 @@ function startGame(){
     playerPoints = 0;
 }
 
-
+//when player lives becom 0  show modal for restart.
 function gameOver(){
     overlay.classList.add("show");
     gameover.classList.add("show");
 }
 
-
+//when player crash cars in road, make player location to first  place
 function resetGame(){
     window.location.reload(true);
 }
 
-
+//if lives ==0 make game over.
 function checkLives(){
     if (alllives.length === 0){
         gameOver()
@@ -202,7 +241,7 @@ function youWin(){
     winnerModal.classList.add("show");
 }
 
-
+//make enemy moves left to right
 var car = function(x, y, speed = 1, carimage) {
 
     this.x = x;
@@ -215,13 +254,15 @@ var car = function(x, y, speed = 1, carimage) {
 
 
 car.prototype.update = function(dt) {
-
+//Change x position of car everyupdate.
     this.x += 50 * this.speed * dt;
-
+    //enemy's postion and player's position is equal
     if (parseInt(this.x)+ 100 >= playerX && parseInt(this.x) <= playerX + 40 && this.y+10 == playerY){
         console.log("a collision just occured your player diessss");
         player.reset();
+        //player position reset
         alllives.pop();
+        //decrease lives
         playerLives -= 1
         if (playerPoints >= 50){
             playerPoints -= 50;
@@ -236,7 +277,7 @@ car.prototype.render = function() {
 
 };
 
-
+//same as car.
 var car1 = function(x, y, speed = 1, carimage) {
 
     this.x = x;
@@ -268,6 +309,7 @@ car1.prototype.render = function() {
 
 };
 
+//make player
 var Player = function (x, y){
     this.x = x;
     this.y = y;
@@ -286,6 +328,7 @@ Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+//when key left, up, right, down pressed, move player position
 Player.prototype.handleInput = function(pressedKeys){
     if (pressedKeys === 'left' && this.x > 33){
         this.x -= 100;
@@ -300,6 +343,7 @@ Player.prototype.handleInput = function(pressedKeys){
         this.y += 80
     }
 };
+//player position.
 Player.prototype.reset = function(){
     this.x = 500;
     this.y = 630;
@@ -360,6 +404,7 @@ Points.prototype.render = function(){
     ctx.font = '20px serif';
     ctx.fillText(this.score, this.x, this.y);
 }
+//update player point when player arrvied to opposite sidewalk
 Points.prototype.update = function(){
     this.score = "Your points: "+ playerPoints
 }
